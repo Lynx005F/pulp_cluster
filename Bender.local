@@ -7,3 +7,7 @@ overrides:
   # Temporarily left here to avoid conflicts
   hwpe-stream         : { git: "https://github.com/pulp-platform/hwpe-stream.git"         , rev: 65c99a4a2f37a79acee800ab0151f67dfb1edef1 } # branch: master
   hci                 : { git: "https://github.com/pulp-platform/hci.git", rev: e47627c20b33bcaf4842c1add81fb888b4f12a9d }
+  fpnew               : { git: "https://github.com/Lynx005F/cvfpu.git"                    , rev: ca802657695cd8a52445298a18a3cde5c352fa25 } # branch itemm/tmr
+  redundancy_cells    : { git: "https://github.com/Lynx005F/redundancy_cells.git"         , rev: 52fe14b918a390e93750a089e8c9772e9984d489 } # branch itemm/astral_time_tmr
+  common_cells        : { git: "https://github.com/Lynx005F/common_cells.git"             , rev: ea286c6b99da4f5788f29a87cad0af17b0f7da74 } # branch itemm/lockable_rr_arbiter
+  riscv               : { git: "https://github.com/Lynx005F/riscv_nn.git"                 , rev: 3cd1b6ec40fb5c33339f160a7edf3fe6015df924 } # branch itemm/time_tmr

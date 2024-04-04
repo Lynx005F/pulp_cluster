@@ -52,10 +52,10 @@ packages:
     dependencies:
     - hci
   common_cells:
-    revision: ad22699793d98ef714f120c6268fe92d096a61e1
-    version: 1.33.1
+    revision: ea286c6b99da4f5788f29a87cad0af17b0f7da74
+    version: null
     source:
-      Git: https://github.com/pulp-platform/common_cells.git
+      Git: https://github.com/Lynx005F/common_cells.git
     dependencies:
     - common_verification
     - tech_cells_generic
@@ -82,13 +82,14 @@ packages:
     dependencies:
     - common_cells
   fpnew:
-    revision: a8e0cba6dd50f357ece73c2c955d96efc3c6c315
+    revision: ca802657695cd8a52445298a18a3cde5c352fa25
     version: null
     source:
-      Git: https://github.com/pulp-platform/cvfpu.git
+      Git: https://github.com/Lynx005F/cvfpu.git
     dependencies:
     - common_cells
     - fpu_div_sqrt_mvp
+    - redundancy_cells
   fpu_div_sqrt_mvp:
     revision: 86e1f558b3c95e91577c41b2fc452c86b04e85ac
     version: 1.0.4
@@ -176,6 +177,7 @@ packages:
     - hci
     - hwpe-ctrl
     - hwpe-stream
+    - zeroriscy
   per2axi:
     revision: 95bf23119b47fc171d9ed3734c431f71cffd9350
     version: null
@@ -197,10 +199,10 @@ packages:
     - hwpe-stream
     - tech_cells_generic
   redundancy_cells:
-    revision: c37bdb47339bf70e8323de8df14ea8bbeafb6583
+    revision: 52fe14b918a390e93750a089e8c9772e9984d489
     version: null
     source:
-      Git: https://github.com/pulp-platform/redundancy_cells.git
+      Git: https://github.com/Lynx005F/redundancy_cells.git
     dependencies:
     - common_cells
     - common_verification
@@ -217,10 +219,10 @@ packages:
     - common_cells
     - common_verification
   riscv:
-    revision: c760db14dbd6cc3ec3b8ae8274df2eac7225bcac
+    revision: 3cd1b6ec40fb5c33339f160a7edf3fe6015df924
     version: null
     source:
-      Git: https://github.com/AlSaqr-platform/riscv_nn.git
+      Git: https://github.com/Lynx005F/riscv_nn.git
     dependencies:
     - fpnew
     - tech_cells_generic
@@ -243,4 +245,10 @@ packages:
     version: 1.0.3
     source:
       Git: https://github.com/pulp-platform/timer_unit.git
+    dependencies: []
+  zeroriscy:
+    revision: 8a6c00e899cb6c715dcd5a3a1a92263994fb634b
+    version: null
+    source:
+      Git: git@github.com:yvantor/ibex.git
     dependencies: []
