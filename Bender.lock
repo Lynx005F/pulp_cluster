@@ -63,8 +63,8 @@ packages:
     dependencies:
     - hci
   common_cells:
-    revision: 0d67563b6b592549542544f1abc0f43e5d4ee8b4
-    version: 1.35.0
+    revision: c27bce39ebb2e6bae52f60960814a2afca7bd4cb
+    version: 1.37.0
     source:
       Git: https://github.com/pulp-platform/common_cells.git
     dependencies:
@@ -108,10 +108,10 @@ packages:
     dependencies:
     - common_cells
   hci:
-    revision: 38fc2a7eea7978df52434e66ee04a40788fd86b7
+    revision: 1af613191246df6a91789b8b6ca77c3c54b256b5
     version: null
     source:
-      Git: https://github.com/pulp-platform/hci.git
+      Git: https://github.com/Lynx005F/hci.git
     dependencies:
     - cluster_interconnect
     - common_cells
@@ -132,17 +132,17 @@ packages:
     - scm
     - tech_cells_generic
   hwpe-ctrl:
-    revision: a5966201aeeb988d607accdc55da933a53c6a56e
+    revision: 376c5da312d60cecd732336d23a0d0da2a1d0ea2
     version: null
     source:
-      Git: https://github.com/pulp-platform/hwpe-ctrl.git
+      Git: https://github.com/Lynx005F/hwpe-ctrl.git
     dependencies:
     - tech_cells_generic
   hwpe-stream:
-    revision: 65c99a4a2f37a79acee800ab0151f67dfb1edef1
-    version: 1.8.0
+    revision: a39dd676f7f4594910306dfcd190ef0ff94e4381
+    version: null
     source:
-      Git: https://github.com/pulp-platform/hwpe-stream.git
+      Git: https://github.com/Lynx005F/hwpe-stream.git
     dependencies:
     - tech_cells_generic
   ibex:
@@ -200,10 +200,10 @@ packages:
     dependencies:
     - axi_slice
   redmule:
-    revision: 9223ccc932e21d0667e9c2d30831db41eec9299e
+    revision: 37b2095e0de5901181ad907d0934fdc980f94cc7
     version: null
     source:
-      Git: https://github.com/pulp-platform/redmule.git
+      Git: https://github.com/Lynx005F/redmule.git
     dependencies:
     - common_cells
     - cv32e40p
@@ -211,21 +211,22 @@ packages:
     - hci
     - hwpe-ctrl
     - hwpe-stream
+    - redundancy_cells
     - register_interface
     - tech_cells_generic
   redundancy_cells:
-    revision: 49e714b97a19a7aaddf064ae2757c8f02d1f62dc
+    revision: 02efa3c26159a720c1aac50329a931a15cf002a3
     version: null
     source:
-      Git: https://github.com/pulp-platform/redundancy_cells.git
+      Git: https://github.com/Lynx005F/redundancy_cells.git
     dependencies:
     - common_cells
     - common_verification
     - register_interface
     - tech_cells_generic
   register_interface:
-    revision: ae616e5a1ec2b41e72d200e5ab09c65e94aebd3d
-    version: 0.4.4
+    revision: 5daa85d164cf6b54ad061ea1e4c6f3624556e467
+    version: 0.4.5
     source:
       Git: https://github.com/pulp-platform/register_interface.git
     dependencies:
