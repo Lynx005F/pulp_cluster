@@ -1,2 +1,11 @@
 overrides:
   cv32e40p            : { git: "https://github.com/pulp-platform/cv32e40p.git"            , rev: e863f576699815b38cc9d80dbdede8ed5efd5991 } # branch: michaero/safety-island-clic
+
+  hci:                    { git: "https://github.com/Lynx005F/hci.git", rev: 1af613191246df6a91789b8b6ca77c3c54b256b5 } # branch: itemm/fpr_features
+
+  # branch: itemm/redmule_features for new features
+  hwpe-stream       : { git: "https://github.com/Lynx005F/hwpe-stream.git" , rev: a39dd676f7f4594910306dfcd190ef0ff94e4381 }
+
+  hwpe-ctrl         : { git: "https://github.com/Lynx005F/hwpe-ctrl.git"              , rev: 376c5da312d60cecd732336d23a0d0da2a1d0ea2 } # branch: itemm/redmule_features
+
+  redundancy_cells:       { git: "https://github.com/Lynx005F/redundancy_cells.git", rev: 02efa3c26159a720c1aac50329a931a15cf002a3 } # branch: fpr_features

@@ -30,10 +30,10 @@ dependencies:
   cv32e40p:               { git: "https://github.com/pulp-platform/cv32e40p.git", rev: e863f576699815b38cc9d80dbdede8ed5efd5991 } # `michaero/safety-island-clic` branch
   ibex:                   { git: "https://github.com/pulp-platform/ibex.git", rev: "pulpissimo-v6.1.2" }
   scm:                    { git: "https://github.com/pulp-platform/scm.git", rev: 74426dee36f28ae1c02f7635cf844a0156145320 } # branch: yt/bump-clkgating
-  hci:                    { git: "https://github.com/pulp-platform/hci.git", rev: 38fc2a7 } # branch: lg/ecc_rebase_v2.1.1
+  hci:                    { git: "https://github.com/Lynx005F/hci.git", rev: 1af613191246df6a91789b8b6ca77c3c54b256b5 } # branch: itemm/fpr_features
   register_interface:     { git: "https://github.com/pulp-platform/register_interface.git", version: 0.4.4  }
-  redundancy_cells:       { git: "https://github.com/pulp-platform/redundancy_cells.git", rev: 49e714b97a19a7aaddf064ae2757c8f02d1f62dc } # branch: astral-v0
-  redmule:                { git: "https://github.com/pulp-platform/redmule.git", rev: 9223ccc } # branch: astral-hci-v2.1
+  redundancy_cells:       { git: "https://github.com/Lynx005F/redundancy_cells.git", rev: 02efa3c26159a720c1aac50329a931a15cf002a3 } # branch: fpr_features
+  redmule:                { git: "https://github.com/Lynx005F/redmule.git", rev: 37b2095e0de5901181ad907d0934fdc980f94cc7 } # branch: itemm/fpr_features
   neureka:                { git: "https://github.com/pulp-platform/neureka.git", rev: 94528df } # branch: fc/astral-v1.0-rebased
   softex:                 { git: "https://github.com/belanoa/softex.git"       , version: 1.0.0 }
 
