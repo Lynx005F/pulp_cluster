@@ -173,6 +173,11 @@ package pulp_cluster_package;
   localparam byte_t AxiSubordinateIdwidth = 4;
   localparam byte_t AxiManagerIdwidth = AxiSubordinateIdwidth + $clog2(NumAxiSubordinatePorts);
 
+  localparam int unsigned FpuNumArgs = 3;
+  localparam int unsigned FpuOpCodeWidth = 6;
+  localparam int unsigned FpuTypeWidth = 3;
+  localparam int unsigned FpuInFlagsWidth = 15;
+
   localparam pulp_cluster_cfg_t PulpClusterDefaultCfg = '{
     CoreType: CV32,
     NumCores: 8,
@@ -266,6 +271,11 @@ package pulp_cluster_package;
     logic [4:0]  irq_ack_id;
     logic        debug_halted;
     logic        core_busy;
+    logic                        apu_master_req;
+    logic [FpuNumArgs-1:0][31:0] apu_master_operands;
+    logic   [FpuOpCodeWidth-1:0] apu_master_op;
+    logic     [FpuTypeWidth-1:0] apu_master_type;
+    logic  [FpuInFlagsWidth-1:0] apu_master_flags;
   } core_outputs_t;
 
   typedef struct packed {

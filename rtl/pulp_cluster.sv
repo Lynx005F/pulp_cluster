@@ -405,13 +405,13 @@ XBAR_PERIPH_BUS s_core_euctrl_bus[Cfg.NumCores-1:0]();
 
 // apu-interconnect
 // handshake signals
-logic [Cfg.NumCores-1:0] s_apu_master_req;
+// logic [Cfg.NumCores-1:0] s_apu_master_req;
 logic [Cfg.NumCores-1:0] s_apu_master_gnt;
 // request channel
-logic [Cfg.NumCores-1:0][FpuNumArgs-1:0][31:0] s_apu_master_operands;
-logic [Cfg.NumCores-1:0][FpuOpCodeWidth-1:0] s_apu_master_op;
-logic [Cfg.NumCores-1:0][FpuTypeWidth-1:0] s_apu_master_type;
-logic [Cfg.NumCores-1:0][FpuInFlagsWidth-1:0] s_apu_master_flags;
+// logic [Cfg.NumCores-1:0][FpuNumArgs-1:0][31:0] s_apu_master_operands;
+// logic [Cfg.NumCores-1:0][FpuOpCodeWidth-1:0] s_apu_master_op;
+// logic [Cfg.NumCores-1:0][FpuTypeWidth-1:0] s_apu_master_type;
+// logic [Cfg.NumCores-1:0][FpuInFlagsWidth-1:0] s_apu_master_flags;
 // response channel
 logic [Cfg.NumCores-1:0] s_apu_master_rready;
 logic [Cfg.NumCores-1:0] s_apu_master_rvalid;
@@ -965,13 +965,13 @@ generate
       .regfile_backup_o    ( backup_bus[i].regfile_backup ),
       .pc_backup_o         ( backup_bus[i].pc_backup      ),
       .csr_backup_o        ( backup_bus[i].csr_backup     ),
-      //apu interface
-      .apu_master_req_o      ( s_apu_master_req     [i] ),
-      .apu_master_gnt_i      ( s_apu_master_gnt     [i] ),
-      .apu_master_type_o     ( s_apu_master_type    [i] ),
-      .apu_master_operands_o ( s_apu_master_operands[i] ),
-      .apu_master_op_o       ( s_apu_master_op      [i] ),
-      .apu_master_flags_o    ( s_apu_master_flags   [i] ),
+      //apu interface 
+      .apu_master_req_o      ( core2hmr[i].apu_master_req      ),
+      .apu_master_gnt_i      ( s_apu_master_gnt[i]             ), 
+      .apu_master_type_o     ( core2hmr[i].apu_master_type     ),
+      .apu_master_operands_o ( core2hmr[i].apu_master_operands ),
+      .apu_master_op_o       ( core2hmr[i].apu_master_op       ),
+      .apu_master_flags_o    ( core2hmr[i].apu_master_flags    ),
       .apu_master_valid_i    ( s_apu_master_rvalid  [i] ),
       .apu_master_ready_o    ( s_apu_master_rready  [i] ),
       .apu_master_result_i   ( s_apu_master_rdata   [i] ),
@@ -1132,6 +1132,7 @@ hmr_unit #(
 //**** Shared FPU cluster - Shared execution units ***
 //****************************************************
 // request channel
+logic [Cfg.NumCores-1:0] s_apu__req;
 logic [Cfg.NumCores-1:0][FpuNumArgs-1:0][31:0] s_apu__operands;
 logic [Cfg.NumCores-1:0][FpuOpCodeWidth-1:0] s_apu__op;
 logic [Cfg.NumCores-1:0][FpuTypeWidth-1:0] s_apu__type;
@@ -1142,10 +1143,11 @@ logic [Cfg.NumCores-1:0][FpuOutFlagsWidth-1:0] s_apu__rflags;
 genvar k;
 for(k=0;k<Cfg.NumCores;k++)
 begin
-  assign s_apu__operands[k] = s_apu_master_operands[k];
-  assign s_apu__op[k] = s_apu_master_op[k];
-  assign s_apu__type[k] = s_apu_master_type[k];
-  assign s_apu__flags[k] = s_apu_master_flags[k];
+  assign s_apu__req[k]          = hmr2sys[k].apu_master_req;
+  assign s_apu__operands[k]     = hmr2sys[k].apu_master_operands;
+  assign s_apu__op[k]           = hmr2sys[k].apu_master_op;
+  assign s_apu__type[k]         = hmr2sys[k].apu_master_type;
+  assign s_apu__flags[k]        = hmr2sys[k].apu_master_flags;
   assign s_apu_master_rflags[k] = s_apu__rflags[k];
 end
 
@@ -1187,7 +1189,7 @@ generate
       .clk                   ( clk_i                   ),
       .rst_n                 ( rst_ni                  ),
       .test_mode_i           ( test_mode_i             ),
-      .core_slave_req_i      ( s_apu_master_req        ),
+      .core_slave_req_i      ( s_apu__req              ),
       .core_slave_gnt_o      ( s_apu_master_gnt        ),
       .core_slave_type_i     ( s_apu__type             ),
       .core_slave_operands_i ( s_apu__operands         ),
