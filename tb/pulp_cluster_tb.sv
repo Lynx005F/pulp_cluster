@@ -305,7 +305,7 @@ module pulp_cluster_tb;
     BootAddr: BootAddr,
     EnablePrivateFpu: 1,
     EnablePrivateFpDivSqrt: 0,
-    EnableSharedFpu: 0,
+    EnableSharedFpu: 1,
     EnableSharedFpDivSqrt: 0,
     NumSharedFpu: 0,
     NumAxiIn: NumAxiSubordinatePorts,
