@@ -36,6 +36,7 @@ dependencies:
   redmule:                { git: "https://github.com/pulp-platform/redmule.git", rev: 9223ccc } # branch: astral-hci-v2.1
   neureka:                { git: "https://github.com/pulp-platform/neureka.git", rev: 94528df } # branch: fc/astral-v1.0-rebased
   softex:                 { git: "https://github.com/belanoa/softex.git"       , version: 1.0.0 }
+  fpu_interco:            { git: "https://github.com/pulp-platform/fpu_interco", rev: b5f7a315929308823cacd81e1e4898f1eeecfc64 } # branch: itemm/bender
 
 export_include_dirs:
   - include
