@@ -209,7 +209,7 @@ packages:
     dependencies:
     - axi_slice
   redmule:
-    revision: 37b2095e0de5901181ad907d0934fdc980f94cc7
+    revision: 9962e8b76778ec29c21ffbb6a1ef4f9669b1461b
     version: null
     source:
       Git: https://github.com/Lynx005F/redmule.git
@@ -258,10 +258,10 @@ packages:
       Git: https://github.com/pulp-platform/scm.git
     dependencies: []
   softex:
-    revision: 23faeccaf204817bc9e6649e469072e5726be561
-    version: 1.0.0
+    revision: 88345b1a9aff72858a4fd237d3486995d4114e4c
+    version: null
     source:
-      Git: https://github.com/belanoa/softex.git
+      Git: https://github.com/Lynx005F/softex.git
     dependencies:
     - common_cells
     - fpnew
