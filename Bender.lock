@@ -93,13 +93,14 @@ packages:
     dependencies:
     - common_cells
   fpnew:
-    revision: a8e0cba6dd50f357ece73c2c955d96efc3c6c315
+    revision: 8cd7e5066f72d9fafff50dc8ab58cc0cd29b88ce
     version: null
     source:
-      Git: https://github.com/pulp-platform/cvfpu.git
+      Git: https://github.com/Lynx005F/cvfpu.git
     dependencies:
     - common_cells
     - fpu_div_sqrt_mvp
+    - redundancy_cells
   fpu_div_sqrt_mvp:
     revision: 86e1f558b3c95e91577c41b2fc452c86b04e85ac
     version: 1.0.4
@@ -108,10 +109,10 @@ packages:
     dependencies:
     - common_cells
   fpu_interco:
-    revision: b5f7a315929308823cacd81e1e4898f1eeecfc64
+    revision: a4e0410cfea93dc6ec5003394602c99bbceb1efe
     version: null
     source:
-      Git: https://github.com/pulp-platform/fpu_interco
+      Git: https://github.com/Lynx005F/fpu_interco
     dependencies:
     - fpnew
     - riscv
@@ -208,7 +209,7 @@ packages:
     dependencies:
     - axi_slice
   redmule:
-    revision: 37b2095e0de5901181ad907d0934fdc980f94cc7
+    revision: 9962e8b76778ec29c21ffbb6a1ef4f9669b1461b
     version: null
     source:
       Git: https://github.com/Lynx005F/redmule.git
@@ -223,7 +224,7 @@ packages:
     - register_interface
     - tech_cells_generic
   redundancy_cells:
-    revision: 02efa3c26159a720c1aac50329a931a15cf002a3
+    revision: 2e171bb662e9287649b233f1569cc174494e5c74
     version: null
     source:
       Git: https://github.com/Lynx005F/redundancy_cells.git
@@ -257,10 +258,10 @@ packages:
       Git: https://github.com/pulp-platform/scm.git
     dependencies: []
   softex:
-    revision: 23faeccaf204817bc9e6649e469072e5726be561
-    version: 1.0.0
+    revision: 88345b1a9aff72858a4fd237d3486995d4114e4c
+    version: null
     source:
-      Git: https://github.com/belanoa/softex.git
+      Git: https://github.com/Lynx005F/softex.git
     dependencies:
     - common_cells
     - fpnew
