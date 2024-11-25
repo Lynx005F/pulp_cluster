@@ -109,7 +109,7 @@ packages:
     dependencies:
     - common_cells
   fpu_interco:
-    revision: 39bf573d192b822c6c48fe0af5a66ea40f04ff0a
+    revision: a4e0410cfea93dc6ec5003394602c99bbceb1efe
     version: null
     source:
       Git: https://github.com/Lynx005F/fpu_interco
@@ -224,7 +224,7 @@ packages:
     - register_interface
     - tech_cells_generic
   redundancy_cells:
-    revision: 2e171bb662e9287649b233f1569cc174494e5c74
+    revision: 74d136f68264ba9d45aa788a3aadcf2531337310
     version: null
     source:
       Git: https://github.com/Lynx005F/redundancy_cells.git

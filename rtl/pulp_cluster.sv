@@ -404,19 +404,15 @@ hci_core_intf #(
 XBAR_PERIPH_BUS s_core_euctrl_bus[Cfg.NumCores-1:0]();
 
 // apu-interconnect
-// handshake signals
-// logic [Cfg.NumCores-1:0] s_apu_master_req;
-logic [Cfg.NumCores-1:0] s_apu_master_gnt;
 // request channel
-// logic [Cfg.NumCores-1:0][FpuNumArgs-1:0][31:0] s_apu_master_operands;
-// logic [Cfg.NumCores-1:0][FpuOpCodeWidth-1:0] s_apu_master_op;
-// logic [Cfg.NumCores-1:0][FpuTypeWidth-1:0] s_apu_master_type;
-// logic [Cfg.NumCores-1:0][FpuInFlagsWidth-1:0] s_apu_master_flags;
+logic [Cfg.NumCores-1:0] apu_mux_gnt;
+// rest of signals here are part of core_outputs_t
+
 // response channel
-logic [Cfg.NumCores-1:0] s_apu_master_rready;
-logic [Cfg.NumCores-1:0] s_apu_master_rvalid;
-logic [Cfg.NumCores-1:0][31:0] s_apu_master_rdata;
-logic [Cfg.NumCores-1:0][FpuOutFlagsWidth-1:0] s_apu_master_rflags;
+logic [Cfg.NumCores-1:0]                       apu_mux_rready;
+logic [Cfg.NumCores-1:0]                       apu_mux_rvalid;
+logic [Cfg.NumCores-1:0][31:0]                 apu_mux_rdata;
+logic [Cfg.NumCores-1:0][FpuOutFlagsWidth-1:0] apu_mux_rflags;
 
 //----------------------------------------------------------------------//
 // Interfaces between ICache - L0 - Icache_Interco and Icache_ctrl_unit //
@@ -962,20 +958,20 @@ generate
       .core_data_rsp_i     ( core_data_rsp[i]          ),
       //HMR Recovery Bus
       .recovery_bus_i      ( recovery_bus[i]              ),
-      .regfile_backup_o    ( backup_bus[i].regfile_backup ),
+      .regfile_backup_o      ( backup_bus[i].regfile_backup ),
       .pc_backup_o         ( backup_bus[i].pc_backup      ),
       .csr_backup_o        ( backup_bus[i].csr_backup     ),
-      //apu interface 
+      //apu interface
       .apu_master_req_o      ( core2hmr[i].apu_master_req      ),
-      .apu_master_gnt_i      ( s_apu_master_gnt[i]             ), 
+      .apu_master_gnt_i      ( apu_mux_gnt[i]                  ),
       .apu_master_type_o     ( core2hmr[i].apu_master_type     ),
       .apu_master_operands_o ( core2hmr[i].apu_master_operands ),
       .apu_master_op_o       ( core2hmr[i].apu_master_op       ),
       .apu_master_flags_o    ( core2hmr[i].apu_master_flags    ),
-      .apu_master_valid_i    ( s_apu_master_rvalid  [i] ),
-      .apu_master_ready_o    ( s_apu_master_rready  [i] ),
-      .apu_master_result_i   ( s_apu_master_rdata   [i] ),
-      .apu_master_flags_i    ( s_apu_master_rflags  [i] )
+      .apu_master_valid_i    ( apu_mux_rvalid  [i] ),
+      .apu_master_ready_o    ( apu_mux_rready  [i] ),
+      .apu_master_result_i   ( apu_mux_rdata   [i] ),
+      .apu_master_flags_i    ( apu_mux_rflags  [i] )
     );
 
     assign dbg_core_halted[i] = core2hmr[i].debug_halted;
@@ -1075,6 +1071,43 @@ always_comb begin
   end
 end
 
+// FPU Inputs / Outputs
+// request channel
+logic [Cfg.NumCores-1:0]                       apu_mux_req;
+logic [Cfg.NumCores-1:0][FpuNumArgs-1:0][31:0] apu_mux_operands;
+logic [Cfg.NumCores-1:0][FpuOpCodeWidth-1:0]   apu_mux_op;
+logic [Cfg.NumCores-1:0][FpuTypeWidth-1:0]     apu_mux_type;
+logic [Cfg.NumCores-1:0][FpuInFlagsWidth-1:0]  apu_mux_flags;
+
+// Connection from Voted Signals to MUX Input Array
+genvar k;
+for(k=0;k<Cfg.NumCores;k++)
+begin
+  assign apu_mux_req[k]          = hmr2sys[k].apu_master_req;
+  assign apu_mux_operands[k]     = hmr2sys[k].apu_master_operands;
+  assign apu_mux_op[k]           = hmr2sys[k].apu_master_op;
+  assign apu_mux_type[k]         = hmr2sys[k].apu_master_type;
+  assign apu_mux_flags[k]        = hmr2sys[k].apu_master_flags;
+end
+
+// FPU Connections
+// request channel
+logic [Cfg.NumCores-1:0]                       s_apu__req;
+logic [Cfg.NumCores-1:0][FpuNumArgs-1:0][31:0] s_apu__operands;
+logic [Cfg.NumCores-1:0][FpuOpCodeWidth-1:0]   s_apu__op;
+logic [Cfg.NumCores-1:0][FpuTypeWidth-1:0]     s_apu__type;
+logic [Cfg.NumCores-1:0][FpuInFlagsWidth-1:0]  s_apu__flags;
+logic [Cfg.NumCores-1:0]                       s_apu__gnt; // reverse direction
+
+// response channel
+logic [Cfg.NumCores-1:0]                       s_apu__rready; // reverse direction
+logic [Cfg.NumCores-1:0]                       s_apu__rvalid;
+logic [Cfg.NumCores-1:0][31:0]                 s_apu__rdata;
+logic [Cfg.NumCores-1:0][FpuOutFlagsWidth-1:0] s_apu__rflags;
+
+// redundancy wires
+logic fpu_redundancy_enable;
+
 hmr_unit #(
   .NumCores          ( Cfg.NumCores                         ),
   .DMRSupported      ( 1                                    ),
@@ -1094,7 +1127,13 @@ hmr_unit #(
   // We use any axi_req_t to just let the unit not complain about
   // undeclared r_ready and b_ready signals.
   .axi_req_t         ( instr_axi_req_t                      ),
-  .rapid_recovery_t  ( rapid_recovery_pkg::rapid_recovery_t )
+  .rapid_recovery_t  ( rapid_recovery_pkg::rapid_recovery_t ),
+  // FPU Arguments
+  .FpuNumArgs        ( FpuNumArgs                           ),
+  .FpuOpCodeWidth    ( FpuOpCodeWidth                       ),
+  .FpuTypeWidth      ( FpuTypeWidth                         ),
+  .FpuInFlagsWidth   ( FpuInFlagsWidth                      ),
+  .FpuOutFlagsWidth (  FpuOutFlagsWidth                     )
 ) i_hmr_unit         (
   .clk_i                  ( clk_i        ),
   .rst_ni                 ( rst_ni       ),
@@ -1125,31 +1164,36 @@ hmr_unit #(
   .core_inputs_o          ( hmr2core     ),
   .core_nominal_outputs_i ( core2hmr     ),
   .core_bus_outputs_i     ( '0           ),
-  .core_axi_outputs_i     ( '0           )
+  .core_axi_outputs_i     ( '0           ),
+  // Use for FPU Config
+  .redundancy_enable_o   ( fpu_redundancy_enable ),
+  // FPU input side
+  .apu_master_req_i      ( apu_mux_req           ), 
+  .apu_master_gnt_o      ( apu_mux_gnt           ),
+  .apu_master_type_i     ( apu_mux_type          ),
+  .apu_master_operands_i ( apu_mux_operands      ),
+  .apu_master_op_i       ( apu_mux_op            ),
+  .apu_master_flags_i    ( apu_mux_flags         ),
+  .apu_master_req_o      ( s_apu__req            ),
+  .apu_master_gnt_i      ( s_apu__gnt            ),
+  .apu_master_type_o     ( s_apu__type           ),
+  .apu_master_operands_o ( s_apu__operands       ),
+  .apu_master_op_o       ( s_apu__op             ),
+  .apu_master_flags_o    ( s_apu__flags          ),
+  // fpu output side
+  .apu_master_rready_o   ( s_apu__rready         ),
+  .apu_master_rvalid_i   ( s_apu__rvalid         ),
+  .apu_master_rresult_i  ( s_apu__rdata          ),
+  .apu_master_rflags_i   ( s_apu__rflags         ),
+  .apu_master_rready_i   ( apu_mux_rready        ),
+  .apu_master_rvalid_o   ( apu_mux_rvalid        ),
+  .apu_master_rresult_o  ( apu_mux_rdata         ),
+  .apu_master_rflags_o   ( apu_mux_rflags        )
 );
 
 //****************************************************
 //**** Shared FPU cluster - Shared execution units ***
 //****************************************************
-// request channel
-logic [Cfg.NumCores-1:0] s_apu__req;
-logic [Cfg.NumCores-1:0][FpuNumArgs-1:0][31:0] s_apu__operands;
-logic [Cfg.NumCores-1:0][FpuOpCodeWidth-1:0] s_apu__op;
-logic [Cfg.NumCores-1:0][FpuTypeWidth-1:0] s_apu__type;
-logic [Cfg.NumCores-1:0][FpuInFlagsWidth-1:0] s_apu__flags;
-// response channel
-logic [Cfg.NumCores-1:0][FpuOutFlagsWidth-1:0] s_apu__rflags;
-
-genvar k;
-for(k=0;k<Cfg.NumCores;k++)
-begin
-  assign s_apu__req[k]          = hmr2sys[k].apu_master_req;
-  assign s_apu__operands[k]     = hmr2sys[k].apu_master_operands;
-  assign s_apu__op[k]           = hmr2sys[k].apu_master_op;
-  assign s_apu__type[k]         = hmr2sys[k].apu_master_type;
-  assign s_apu__flags[k]        = hmr2sys[k].apu_master_flags;
-  assign s_apu_master_rflags[k] = s_apu__rflags[k];
-end
 
 generate
   if (Cfg.EnableSharedFpu) begin
@@ -1178,33 +1222,36 @@ generate
       .APUTYPE_ID       ( 1                 ),
       .FPNEWTYPE_ID     ( 0                 ),
 
-      .C_FPNEW_FMTBITS     (fpnew_pkg::FP_FORMAT_BITS  ),
-      .C_FPNEW_IFMTBITS    (fpnew_pkg::INT_FORMAT_BITS ),
-      .C_ROUND_BITS        (3                          ),
-      .C_FPNEW_OPBITS      (fpnew_pkg::OP_BITS         ),
-      .USE_FPU_OPT_ALLOC   ("FALSE"),
-      .USE_FPNEW_OPT_ALLOC ("TRUE"),
-      .FPNEW_INTECO_TYPE   ("SINGLE_INTERCO")
+      .C_FPNEW_FMTBITS     ( fpnew_pkg::FP_FORMAT_BITS  ),
+      .C_FPNEW_IFMTBITS    ( fpnew_pkg::INT_FORMAT_BITS ),
+      .C_ROUND_BITS        ( 3                          ),
+      .C_FPNEW_OPBITS      ( fpnew_pkg::OP_BITS         ),
+      .USE_FPU_OPT_ALLOC   ( "FALSE"                    ),
+      .USE_FPNEW_OPT_ALLOC ( "TRUE"                     ),
+      .FPNEW_INTECO_TYPE   ( "SINGLE_INTERCO"           ),
+      .FPNEW_REDUNDANCY    ( fpnew_pkg::DTR             )
     ) i_shared_fpu_cluster (
       .clk                   ( clk_i                   ),
       .rst_n                 ( rst_ni                  ),
       .test_mode_i           ( test_mode_i             ),
       .core_slave_req_i      ( s_apu__req              ),
-      .core_slave_gnt_o      ( s_apu_master_gnt        ),
+      .core_slave_gnt_o      ( s_apu__gnt              ),
       .core_slave_type_i     ( s_apu__type             ),
       .core_slave_operands_i ( s_apu__operands         ),
       .core_slave_op_i       ( s_apu__op               ),
       .core_slave_flags_i    ( s_apu__flags            ),
-      .core_slave_rready_i   ( s_apu_master_rready     ),
-      .core_slave_rvalid_o   ( s_apu_master_rvalid     ),
-      .core_slave_rdata_o    ( s_apu_master_rdata      ),
-      .core_slave_rflags_o   ( s_apu__rflags           )
+      .core_slave_rready_i   ( s_apu__rready           ),
+      .core_slave_rvalid_o   ( s_apu__rvalid           ),
+      .core_slave_rdata_o    ( s_apu__rdata            ),
+      .core_slave_rflags_o   ( s_apu__rflags           ),
+      .redundancy_enable_i   ( fpu_redundancy_enable   ),
+      .fault_detected_o      ( /*Unused*/              )
     );
   end else begin
-    assign s_apu_master_gnt    = '0;
-    assign s_apu_master_rvalid = '0;
-    assign s_apu_master_rdata  = '0;
-    assign s_apu__rflags       = '0;
+    assign s_apu__gnt    = '0;
+    assign s_apu__rvalid = '0;
+    assign s_apu__rdata  = '0;
+    assign s_apu__rflags = '0;
   end
 endgenerate
 
