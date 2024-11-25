@@ -1,1 +1,10 @@
 scripts/compile.tcl
+.bender/
+work/
+
+modelsim.ini
+
+transcript
+sim.log
+FETCH_CORE_0.log
+.gitignore

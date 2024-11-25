@@ -405,7 +405,12 @@ XBAR_PERIPH_BUS s_core_euctrl_bus[Cfg.NumCores-1:0]();
 
 // apu-interconnect
 // request channel
-logic [Cfg.NumCores-1:0] apu_mux_gnt;
+logic [Cfg.NumCores-1:0]                       apu_mux_gnt;
+logic [Cfg.NumCores-1:0]                       apu_mux_req;
+logic [Cfg.NumCores-1:0][FpuNumArgs-1:0][31:0] apu_mux_operands;
+logic [Cfg.NumCores-1:0][FpuOpCodeWidth-1:0]   apu_mux_op;
+logic [Cfg.NumCores-1:0][FpuTypeWidth-1:0]     apu_mux_type;
+logic [Cfg.NumCores-1:0][FpuInFlagsWidth-1:0]  apu_mux_flags;
 // rest of signals here are part of core_outputs_t
 
 // response channel
@@ -962,12 +967,12 @@ generate
       .pc_backup_o         ( backup_bus[i].pc_backup      ),
       .csr_backup_o        ( backup_bus[i].csr_backup     ),
       //apu interface
-      .apu_master_req_o      ( core2hmr[i].apu_master_req      ),
-      .apu_master_gnt_i      ( apu_mux_gnt[i]                  ),
-      .apu_master_type_o     ( core2hmr[i].apu_master_type     ),
-      .apu_master_operands_o ( core2hmr[i].apu_master_operands ),
-      .apu_master_op_o       ( core2hmr[i].apu_master_op       ),
-      .apu_master_flags_o    ( core2hmr[i].apu_master_flags    ),
+      .apu_master_req_o      ( apu_mux_req     [i] ),
+      .apu_master_gnt_i      ( apu_mux_gnt     [i] ),
+      .apu_master_type_o     ( apu_mux_type    [i] ),
+      .apu_master_operands_o ( apu_mux_operands[i] ),
+      .apu_master_op_o       ( apu_mux_op      [i] ),
+      .apu_master_flags_o    ( apu_mux_flags   [i] ),
       .apu_master_valid_i    ( apu_mux_rvalid  [i] ),
       .apu_master_ready_o    ( apu_mux_rready  [i] ),
       .apu_master_result_i   ( apu_mux_rdata   [i] ),
@@ -1072,25 +1077,6 @@ always_comb begin
 end
 
 // FPU Inputs / Outputs
-// request channel
-logic [Cfg.NumCores-1:0]                       apu_mux_req;
-logic [Cfg.NumCores-1:0][FpuNumArgs-1:0][31:0] apu_mux_operands;
-logic [Cfg.NumCores-1:0][FpuOpCodeWidth-1:0]   apu_mux_op;
-logic [Cfg.NumCores-1:0][FpuTypeWidth-1:0]     apu_mux_type;
-logic [Cfg.NumCores-1:0][FpuInFlagsWidth-1:0]  apu_mux_flags;
-
-// Connection from Voted Signals to MUX Input Array
-genvar k;
-for(k=0;k<Cfg.NumCores;k++)
-begin
-  assign apu_mux_req[k]          = hmr2sys[k].apu_master_req;
-  assign apu_mux_operands[k]     = hmr2sys[k].apu_master_operands;
-  assign apu_mux_op[k]           = hmr2sys[k].apu_master_op;
-  assign apu_mux_type[k]         = hmr2sys[k].apu_master_type;
-  assign apu_mux_flags[k]        = hmr2sys[k].apu_master_flags;
-end
-
-// FPU Connections
 // request channel
 logic [Cfg.NumCores-1:0]                       s_apu__req;
 logic [Cfg.NumCores-1:0][FpuNumArgs-1:0][31:0] s_apu__operands;

@@ -271,11 +271,6 @@ package pulp_cluster_package;
     logic [4:0]  irq_ack_id;
     logic        debug_halted;
     logic        core_busy;
-    logic                        apu_master_req;
-    logic [FpuNumArgs-1:0][31:0] apu_master_operands;
-    logic   [FpuOpCodeWidth-1:0] apu_master_op;
-    logic     [FpuTypeWidth-1:0] apu_master_type;
-    logic  [FpuInFlagsWidth-1:0] apu_master_flags;
   } core_outputs_t;
 
   typedef struct packed {
