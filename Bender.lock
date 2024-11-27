@@ -224,7 +224,7 @@ packages:
     - register_interface
     - tech_cells_generic
   redundancy_cells:
-    revision: 2e171bb662e9287649b233f1569cc174494e5c74
+    revision: 242955f077d14721af241ec0b6d8ee9d0c043c9c
     version: null
     source:
       Git: https://github.com/Lynx005F/redundancy_cells.git
