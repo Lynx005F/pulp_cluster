@@ -10,4 +10,4 @@ overrides:
 
   redundancy_cells:       { git: "https://github.com/Lynx005F/redundancy_cells.git", rev: 9dddd8bc9b6498d99ecc7f8b045e6b42e5bf5d1d } # branch: fpr_features
 
-  fpnew: { git: "https://github.com/Lynx005F/cvfpu.git", rev: 8cd7e5066f72d9fafff50dc8ab58cc0cd29b88ce }
+  fpnew: { git: "https://github.com/Lynx005F/cvfpu.git", rev: 8b4a203a3ea3fae02cc61010daf16b48e6aeef7d }

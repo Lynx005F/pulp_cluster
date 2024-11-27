@@ -93,7 +93,7 @@ packages:
     dependencies:
     - common_cells
   fpnew:
-    revision: 8cd7e5066f72d9fafff50dc8ab58cc0cd29b88ce
+    revision: 8b4a203a3ea3fae02cc61010daf16b48e6aeef7d
     version: null
     source:
       Git: https://github.com/Lynx005F/cvfpu.git
