@@ -14,6 +14,7 @@
  */
 
 package apu_package;
+   import fpnew_pkg::*;
 
    parameter FPU                 = 1;
    
@@ -24,18 +25,18 @@ package apu_package;
    // Shared div/sqrt implementation 0=none, 1=pipelined version, 2=iterative shared unit
    parameter SHARED_FP_DIVSQRT = 2;
 
-   ////////////////////////////////////////////////////////////////////////////////////////
-   //  IMPORTANT!!                                                                       //
-   ////////////////////////////////////////////////////////////////////////////////////////
-   // THESE PARAMETERS HAVE TO MATCH THE ones in ips/riscv/includes/apu_core_package.sv  //
-   ////////////////////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////
+   //  IMPORTANT!!                                         //
+   //////////////////////////////////////////////////////////
+   // THESE PARAMETERS HAVE TO MATCH THE ones in the core  //
+   //////////////////////////////////////////////////////////
   
    // by default set to 0
    parameter SHARED_INT_MULT   = 0;
 
    // CPU side / general params
    parameter NARGS_CPU     = 3;
-   parameter WOP_CPU       = 6;
+   parameter WOP_CPU       = fpnew_pkg::OP_BITS + 2;
    parameter NUSFLAGS_CPU  = 5;
    parameter NDSFLAGS_CPU  = 15;
    /////////////////////////////////////////////////////////////////////////////

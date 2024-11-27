@@ -28,6 +28,7 @@ module pulp_cluster
   import hci_package::*;
   import rapid_recovery_pkg::*;
   import fpnew_pkg::*;
+  import apu_package::*;
 #(
   parameter  pulp_cluster_package::pulp_cluster_cfg_t Cfg = pulp_cluster_package::PulpClusterDefaultCfg,
   localparam int unsigned TcdmBankSize = Cfg.TcdmSize/Cfg.TcdmNumBank,
@@ -92,12 +93,6 @@ module pulp_cluster
   localparam int unsigned AsyncEventDataWidth = (2**Cfg.AxiCdcLogDepth)*EventWidth,
   // LSB used as routing BIT in periph interco
   localparam int unsigned PeRoutingLsb = 10,
-  // FPU bus parameters
-  localparam int unsigned FpuNumArgs = 3,
-  localparam int unsigned FpuOpCodeWidth = 6,
-  localparam int unsigned FpuTypeWidth = 3,
-  localparam int unsigned FpuInFlagsWidth = 15,
-  localparam int unsigned FpuOutFlagsWidth = 5,
   // Number of parity bits for ECC in memory banks
   localparam int unsigned ParityWidth = 7,
   // Number of parity bits for metadata in ECC-extended HCI
@@ -907,11 +902,11 @@ generate
       .CLUSTER_ALIAS       ( Cfg.ClusterAlias           ),
       .CLUSTER_ALIAS_BASE  ( Cfg.ClusterAliasBase       ),
       .REMAP_ADDRESS       ( Cfg.EnableRemapAddress     ),
-      .APU_NARGS_CPU       ( FpuNumArgs                 ),
-      .APU_WOP_CPU         ( FpuOpCodeWidth             ),
-      .WAPUTYPE            ( FpuTypeWidth               ),
-      .APU_NDSFLAGS_CPU    ( FpuInFlagsWidth            ),
-      .APU_NUSFLAGS_CPU    ( FpuOutFlagsWidth           ),
+      .APU_NARGS_CPU       ( NARGS_CPU                  ),
+      .APU_WOP_CPU         ( WOP_CPU                    ),
+      .WAPUTYPE            ( WAPUTYPE                   ),
+      .APU_NDSFLAGS_CPU    ( NDSFLAGS_CPU               ),
+      .APU_NUSFLAGS_CPU    ( NUSFLAGS_CPU               ),
       .DEBUG_START_ADDR    ( Cfg.DmBaseAddr             ),
       .FPU                 ( Cfg.EnablePrivateFpu       ),
       .FP_DIVSQRT          ( Cfg.EnablePrivateFpDivSqrt ),
@@ -1123,18 +1118,18 @@ hmr_unit #(
 
 // Connection from HMR Unit to Shared FPU Cluster so that arrays are correct
 // request channel
-logic [Cfg.NumCores-1:0]                       apu_req;
-logic [Cfg.NumCores-1:0][FpuNumArgs-1:0][31:0] apu_operands;
-logic [Cfg.NumCores-1:0][FpuOpCodeWidth-1:0]   apu_op;
-logic [Cfg.NumCores-1:0][FpuTypeWidth-1:0]     apu_type;
-logic [Cfg.NumCores-1:0][FpuInFlagsWidth-1:0]  apu_flags;
-logic [Cfg.NumCores-1:0]                       apu_gnt; // reverse direction
+logic [Cfg.NumCores-1:0]                      apu_req;
+logic [Cfg.NumCores-1:0][NARGS_CPU-1:0][31:0] apu_operands;
+logic [Cfg.NumCores-1:0][WOP_CPU-1:0]         apu_op;
+logic [Cfg.NumCores-1:0][WAPUTYPE-1:0]        apu_type;
+logic [Cfg.NumCores-1:0][NDSFLAGS_CPU-1:0]    apu_flags;
+logic [Cfg.NumCores-1:0]                      apu_gnt; // reverse direction
 
 // response channel
-logic [Cfg.NumCores-1:0]                       apu_rready; // reverse direction
-logic [Cfg.NumCores-1:0]                       apu_rvalid;
-logic [Cfg.NumCores-1:0][31:0]                 apu_rdata;
-logic [Cfg.NumCores-1:0][FpuOutFlagsWidth-1:0] apu_rflags;
+logic [Cfg.NumCores-1:0]                      apu_rready; // reverse direction
+logic [Cfg.NumCores-1:0]                      apu_rvalid;
+logic [Cfg.NumCores-1:0][31:0]                apu_rdata;
+logic [Cfg.NumCores-1:0][NUSFLAGS_CPU-1:0]    apu_rflags;
 
 genvar k;
 for(k=0;k<Cfg.NumCores;k++)
@@ -1157,29 +1152,29 @@ end
 generate
   if (Cfg.EnableSharedFpu) begin
     shared_fpu_cluster #(
-      .NB_CORES         ( Cfg.NumCores      ),
-      .NB_APUS          ( 1                 ), // Number of shared FpuDivSqrt
-      .NB_FPNEW         ( Cfg.NumSharedFpu  ),
-      .FP_TYPE_WIDTH    ( FpuTypeWidth      ),
+      .NB_CORES           ( Cfg.NumCores     ),
+      .NB_APUS            ( 1                ), // Number of shared FpuDivSqrt
+      .NB_FPNEW           ( Cfg.NumSharedFpu ),
+      .FP_TYPE_WIDTH      ( WAPUTYPE         ),
 
-      .NB_CORE_ARGS      ( FpuNumArgs       ),
-      .CORE_DATA_WIDTH   ( DataWidth        ),
-      .CORE_OPCODE_WIDTH ( FpuOpCodeWidth   ),
-      .CORE_DSFLAGS_CPU  ( FpuInFlagsWidth  ),
-      .CORE_USFLAGS_CPU  ( FpuOutFlagsWidth ),
+      .NB_CORE_ARGS       ( NARGS_CPU        ),
+      .CORE_DATA_WIDTH    ( DataWidth        ),
+      .CORE_OPCODE_WIDTH  ( WOP_CPU          ),
+      .CORE_DSFLAGS_CPU   ( NDSFLAGS_CPU     ),
+      .CORE_USFLAGS_CPU   ( NUSFLAGS_CPU     ),
 
-      .NB_APU_ARGS      ( FpuNumArgs        ),
-      .APU_OPCODE_WIDTH ( FpuOpCodeWidth    ),
-      .APU_DSFLAGS_CPU  ( FpuInFlagsWidth   ),
-      .APU_USFLAGS_CPU  ( FpuOutFlagsWidth  ),
+      .NB_APU_ARGS        ( NARGS_CPU        ),
+      .APU_OPCODE_WIDTH   ( WOP_CPU          ),
+      .APU_DSFLAGS_CPU    ( NDSFLAGS_CPU     ),
+      .APU_USFLAGS_CPU    ( NUSFLAGS_CPU     ),
 
-      .NB_FPNEW_ARGS        ( FpuNumArgs       ),
-      .FPNEW_OPCODE_WIDTH   ( FpuOutFlagsWidth ),
-      .FPNEW_DSFLAGS_CPU    ( FpuInFlagsWidth  ),
-      .FPNEW_USFLAGS_CPU    ( FpuOutFlagsWidth ),
+      .NB_FPNEW_ARGS      ( NARGS_CPU        ),
+      .FPNEW_OPCODE_WIDTH ( WOP_CPU          ),
+      .FPNEW_DSFLAGS_CPU  ( NDSFLAGS_CPU     ),
+      .FPNEW_USFLAGS_CPU  ( NUSFLAGS_CPU     ),
 
-      .APUTYPE_ID       ( 1                 ),
-      .FPNEWTYPE_ID     ( 0                 ),
+      .APUTYPE_ID         ( 1                ),
+      .FPNEWTYPE_ID       ( 0                ),
 
       .C_FPNEW_FMTBITS     ( fpnew_pkg::FP_FORMAT_BITS  ),
       .C_FPNEW_IFMTBITS    ( fpnew_pkg::INT_FORMAT_BITS ),
