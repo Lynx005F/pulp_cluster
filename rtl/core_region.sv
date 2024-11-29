@@ -111,7 +111,9 @@ import rapid_recovery_pkg::*;
   output logic                           apu_master_ready_o,
   input logic                            apu_master_valid_i,
   input logic [31:0]                     apu_master_result_i,
-  input logic [APU_NUSFLAGS_CPU-1:0]     apu_master_flags_i
+  input logic [APU_NUSFLAGS_CPU-1:0]     apu_master_flags_i,
+  // latency override for temporal or retrying APU
+  input logic                            apu_latency_override_i 
 );
 
   // localparam N_EXT_PERF_COUNTERS_ACTUAL = 5;
@@ -284,6 +286,8 @@ import rapid_recovery_pkg::*;
         .apu_master_valid_i    ( apu_master_valid_i          ),
         .apu_master_result_i   ( apu_master_result_i         ),
         .apu_master_flags_i    ( apu_master_flags_i          ),
+        // Latency Override for redundant operations
+        .apu_latency_override_i( apu_latency_override_i       ),
         // IRQ Interface
         .irq_i                 ( irq_req_i                   ),
         .irq_id_i              ( irq_id_i                    ),
