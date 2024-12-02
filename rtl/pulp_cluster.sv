@@ -1184,7 +1184,7 @@ generate
       .USE_FPU_OPT_ALLOC   ( "FALSE"                    ),
       .USE_FPNEW_OPT_ALLOC ( "TRUE"                     ),
       .FPNEW_INTECO_TYPE   ( "SINGLE_INTERCO"           ),
-      .FPNEW_REDUNDANCY    ( fpnew_pkg::DTR             )
+      .FPNEW_REDUNDANCY    ( fpnew_pkg::NONE            )
     ) i_shared_fpu_cluster (
       .clk                   ( clk_i                   ),
       .rst_n                 ( rst_ni                  ),
@@ -1199,7 +1199,7 @@ generate
       .core_slave_rvalid_o   ( apu_rvalid              ),
       .core_slave_rdata_o    ( apu_rdata               ),
       .core_slave_rflags_o   ( apu_rflags              ),
-      .redundancy_enable_i   ( fpu_redundancy_enable   ),
+      .redundancy_enable_i   ( '0                      ),
       .fault_detected_o      ( /*Unused*/              )
     );
   end else begin

@@ -104,7 +104,7 @@ module hwpe_subsystem
         .ID_WIDTH       ( ID_WIDTH         ),
         .N_CORES        ( N_CORES          ),
         .DW             ( N_MASTER_PORT*32 ),
-        .USE_REDUNDANCY ( 1                ), // Todo: Pass to config
+        .USE_REDUNDANCY ( 0                ),
         .`HCI_SIZE_PARAM(tcdm) ( HCI_HWPE_SIZE )
       ) i_redmule    (
         .clk_i       ( hwpe_clk[i] ),
