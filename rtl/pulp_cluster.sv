@@ -1183,8 +1183,7 @@ generate
       .C_FPNEW_OPBITS      ( fpnew_pkg::OP_BITS         ),
       .USE_FPU_OPT_ALLOC   ( "FALSE"                    ),
       .USE_FPNEW_OPT_ALLOC ( "TRUE"                     ),
-      .FPNEW_INTECO_TYPE   ( "SINGLE_INTERCO"           ),
-      .FPNEW_REDUNDANCY    ( fpnew_pkg::DTR_INORDER     )
+      .FPNEW_INTECO_TYPE   ( "SINGLE_INTERCO"           )
     ) i_shared_fpu_cluster (
       .clk                   ( clk_i                   ),
       .rst_n                 ( rst_ni                  ),

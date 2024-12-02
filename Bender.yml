@@ -36,7 +36,7 @@ dependencies:
   redmule:                { git: "https://github.com/Lynx005F/redmule.git", rev: 9962e8b76778ec29c21ffbb6a1ef4f9669b1461b } # branch: itemm/fpr_features
   neureka:                { git: "https://github.com/pulp-platform/neureka.git", rev: 94528df } # branch: fc/astral-v1.0-rebased
   softex:                 { git: "https://github.com/Lynx005F/softex.git" , rev: 88345b1a9aff72858a4fd237d3486995d4114e4c }
-  fpu_interco:            { git: "https://github.com/Lynx005F/fpu_interco", rev: a4e0410cfea93dc6ec5003394602c99bbceb1efe } # branch: itemm/rfp
+  fpu_interco:            { git: "https://github.com/Lynx005F/fpu_interco", rev: eaed58c2d8671e18628adde6b368a1307ef7efab } # branch: itemm/spatial_redundancy_for_benchmarks_only
 
 export_include_dirs:
   - include

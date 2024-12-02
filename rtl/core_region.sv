@@ -287,7 +287,7 @@ import rapid_recovery_pkg::*;
         .apu_master_result_i   ( apu_master_result_i         ),
         .apu_master_flags_i    ( apu_master_flags_i          ),
         // Latency Override for redundant operations
-        .apu_latency_override_i( apu_latency_override_i       ),
+        .apu_latency_override_i( '0                          ),
         // IRQ Interface
         .irq_i                 ( irq_req_i                   ),
         .irq_id_i              ( irq_id_i                    ),
