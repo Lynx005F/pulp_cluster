@@ -1184,7 +1184,7 @@ generate
       .USE_FPU_OPT_ALLOC   ( "FALSE"                    ),
       .USE_FPNEW_OPT_ALLOC ( "TRUE"                     ),
       .FPNEW_INTECO_TYPE   ( "SINGLE_INTERCO"           ),
-      .FPNEW_REDUNDANCY    ( fpnew_pkg::DTR             )
+      .FPNEW_REDUNDANCY    ( fpnew_pkg::DTR_INORDER     )
     ) i_shared_fpu_cluster (
       .clk                   ( clk_i                   ),
       .rst_n                 ( rst_ni                  ),
