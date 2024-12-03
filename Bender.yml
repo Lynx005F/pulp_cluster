@@ -32,11 +32,11 @@ dependencies:
   scm:                    { git: "https://github.com/pulp-platform/scm.git", rev: 74426dee36f28ae1c02f7635cf844a0156145320 } # branch: yt/bump-clkgating
   hci:                    { git: "https://github.com/Lynx005F/hci.git", rev: 1af613191246df6a91789b8b6ca77c3c54b256b5 } # branch: itemm/fpr_features
   register_interface:     { git: "https://github.com/pulp-platform/register_interface.git", version: 0.4.4  }
-  redundancy_cells:       { git: "https://github.com/Lynx005F/redundancy_cells.git", rev: 02efa3c26159a720c1aac50329a931a15cf002a3 } # branch: fpr_features
-  redmule:                { git: "https://github.com/Lynx005F/redmule.git", rev: 37b2095e0de5901181ad907d0934fdc980f94cc7 } # branch: itemm/fpr_features
+  redundancy_cells:       { git: "https://github.com/Lynx005F/redundancy_cells.git", rev: 2e171bb662e9287649b233f1569cc174494e5c74 } # branch: fpr_features
+  redmule:                { git: "https://github.com/Lynx005F/redmule.git", rev: 9962e8b76778ec29c21ffbb6a1ef4f9669b1461b } # branch: itemm/fpr_features
   neureka:                { git: "https://github.com/pulp-platform/neureka.git", rev: 94528df } # branch: fc/astral-v1.0-rebased
-  softex:                 { git: "https://github.com/belanoa/softex.git"       , version: 1.0.0 }
-  fpu_interco:            { git: "https://github.com/pulp-platform/fpu_interco", rev: b5f7a315929308823cacd81e1e4898f1eeecfc64 } # branch: itemm/bender
+  softex:                 { git: "https://github.com/Lynx005F/softex.git" , rev: 88345b1a9aff72858a4fd237d3486995d4114e4c }
+  fpu_interco:            { git: "https://github.com/Lynx005F/fpu_interco", rev: a4e0410cfea93dc6ec5003394602c99bbceb1efe } # branch: itemm/rfp
 
 export_include_dirs:
   - include
@@ -46,6 +46,8 @@ sources:
     # package. Files in level 1 only depend on files in level 0, files in level 2 on files in
     # levels 1 and 0, etc. Files within a level are ordered alphabetically.
     # Level 0
+  - packages/apu_package.sv
+    # Level 1
   - packages/pulp_cluster_package.sv
   - rtl/axi2mem_wrap.sv
   - rtl/axi2per_wrap.sv
@@ -68,18 +70,18 @@ sources:
   - rtl/periph_FIFO.sv
   - rtl/tcdm_banks_wrap.sv
   - rtl/xbar_pe_wrap.sv
-    # Level 1
+    # Level 2
   - rtl/cluster_interconnect_wrap.sv
   - rtl/cluster_peripherals.sv
   - rtl/data_periph_demux.sv
   - rtl/core_demux_wrap.sv
-    # Level 2
+    # Level 3
   - rtl/core_region.sv
   - target: simulation
     files:
     defines:
       TRACE_EXECUTION: ~
-    # Level 3
+    # Level 4
   - rtl/pulp_cluster.sv
 
   - target: test
