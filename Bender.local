@@ -8,6 +8,6 @@ overrides:
 
   hwpe-ctrl         : { git: "https://github.com/Lynx005F/hwpe-ctrl.git"              , rev: 376c5da312d60cecd732336d23a0d0da2a1d0ea2 } # branch: itemm/redmule_features
 
-  redundancy_cells:       { git: "https://github.com/Lynx005F/redundancy_cells.git", rev: 242955f077d14721af241ec0b6d8ee9d0c043c9c } # branch: fpr_features
+  redundancy_cells:       { git: "https://github.com/Lynx005F/redundancy_cells.git", rev: 9dddd8bc9b6498d99ecc7f8b045e6b42e5bf5d1d } # branch: fpr_features
 
   fpnew: { git: "https://github.com/Lynx005F/cvfpu.git", rev: 8cd7e5066f72d9fafff50dc8ab58cc0cd29b88ce }
