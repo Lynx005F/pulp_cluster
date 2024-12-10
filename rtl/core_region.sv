@@ -25,6 +25,7 @@
 
 module core_region
 import rapid_recovery_pkg::*;
+import apu_package::*;
 #(
   // CORE PARAMETERS
   parameter CORE_TYPE_CL            = 0,  // 0 for CV32, 1 RI5CY, 2 for IBEX RV32IMC
@@ -100,9 +101,9 @@ import rapid_recovery_pkg::*;
 
   output core_data_req_t                 core_data_req_o,
   input  core_data_rsp_t                 core_data_rsp_i,
+  // request channel
   output logic                           apu_master_req_o,
   input logic                            apu_master_gnt_i,
-  // request channel
   output logic [WAPUTYPE-1:0]            apu_master_type_o,
   output logic [APU_NARGS_CPU-1:0][31:0] apu_master_operands_o,
   output logic [APU_WOP_CPU-1:0]         apu_master_op_o,
@@ -148,6 +149,147 @@ import rapid_recovery_pkg::*;
   logic        core_data_req_we ;
 
   assign hart_id = {21'b0, cluster_id_i[5:0], 1'b0, core_id_i};
+
+
+   //********************************************************
+   //***************** TMR MODULES **************************
+   //********************************************************
+
+  localparam LOCK_TIMEOUT = 60;
+
+  retry_interface #(
+    .IDSize ( FLAG_TAG_BITS -1 )
+  ) retry_connection ();
+
+  DTR_interface #(
+    .IDSize             ( FLAG_TAG_BITS ),
+    .InternalRedundancy ( 0             )
+  ) dtr_connection ();
+
+  // Request Processing
+  typedef struct packed {
+    logic [WAPUTYPE-1:0]            ftype;
+    logic [APU_NARGS_CPU-1:0][31:0] operands;
+    logic [APU_WOP_CPU-1:0]         op;
+    logic [PURE_NDSFLAGS_CPU-1:0]   flags;
+  } data_in_t;
+
+  logic core2dtr_req;
+  logic dtr2core_gnt;
+  data_in_t core2dtr_data;
+
+  data_in_t retry2dtr_data;
+  logic [FLAG_TAG_BITS-2:0] retry2dtr_opid;
+  logic retry2dtr_valid, retry2dtr_ready;
+
+  logic [FLAG_TAG_BITS-1:0] dtr2fpu_id;
+  data_in_t dtr2fpu_data;
+
+  retry_start #(
+      .DataType       ( data_in_t         ),
+      .IDSize         ( FLAG_TAG_BITS - 1 ),
+      .ExternalIDBits ( 0                 )
+  ) i_retry_start (
+      .clk_i,
+      .rst_ni,
+      .data_i        ( core2dtr_data        ),
+      .ext_id_bits_i ( '0                   ),
+      .valid_i       ( core2dtr_req         ),
+      .ready_o       ( dtr2core_gnt         ),
+      .data_o        ( retry2dtr_data       ),
+      .id_o          ( retry2dtr_opid       ),
+      .valid_o       ( retry2dtr_valid      ),
+      .ready_i       ( retry2dtr_ready      ),
+      .retry         ( retry_connection     )
+  );
+
+  DTR_start #(
+      .DataType           ( data_in_t        ),
+      .IDSize             ( FLAG_TAG_BITS    ),
+      .InternalRedundancy ( 0                ),
+      .UseExternalId      ( 1                ),
+      .EarlyReadyEnable   ( 1                )
+  ) i_DTR_start (
+      .clk_i,
+      .rst_ni,
+      .enable_i      ( apu_latency_override_i  ),
+      .dtr_interface ( dtr_connection          ),
+      .data_i        ( retry2dtr_data          ),
+      .id_i          ( retry2dtr_opid          ),
+      .valid_i       ( retry2dtr_valid         ),
+      .ready_o       ( retry2dtr_ready         ),
+      .data_o        ( dtr2fpu_data            ),  
+      .id_o          ( dtr2fpu_id              ),
+      .valid_o       ( apu_master_req_o        ),
+      .ready_i       ( apu_master_gnt_i        )
+  );
+
+  assign apu_master_type_o = dtr2fpu_data.ftype;
+  assign apu_master_operands_o = dtr2fpu_data.operands;
+  assign apu_master_op_o = dtr2fpu_data.op;
+  assign apu_master_flags_o = {dtr2fpu_id, dtr2fpu_data.flags};
+
+  // Response Processing
+  typedef struct packed {
+    logic [31:0]                  result;
+    logic [PURE_NUSFLAGS_CPU-1:0] flags;
+  } data_out_t;
+
+  data_out_t fpu2dtr_data;
+  logic [FLAG_TAG_BITS-1:0] fpu2dtr_id;
+
+  data_out_t dtr2retry_data;
+  logic [FLAG_TAG_BITS-2:0] dtr2retry_opid;
+  logic dtr2retry_valid, dtr2retry_ready, dtr2retry_needs_retry;
+
+  logic core2dtr_ready;
+  logic dtr2core_valid;
+  data_out_t dtr2core_data;
+
+  // response channel
+  assign fpu2dtr_data.result = apu_master_result_i;
+  assign {fpu2dtr_id, fpu2dtr_data.flags} = apu_master_flags_i;
+
+  DTR_end #(
+      .DataType           ( data_out_t        ),
+      .LockTimeout        ( LOCK_TIMEOUT      ),
+      .IDSize             ( FLAG_TAG_BITS     ),
+      .InternalRedundancy ( 0                 )
+  ) i_DTR_end (
+      .clk_i,
+      .rst_ni,
+      .enable_i         ( apu_latency_override_i  ),
+      .dtr_interface    ( dtr_connection          ),
+      .data_i           ( fpu2dtr_data            ),
+      .id_i             ( fpu2dtr_id              ),
+      .valid_i          ( apu_master_valid_i      ),
+      .ready_o          ( apu_master_ready_o      ),
+      .lock_o           ( /*  */                  ),
+      .data_o           ( dtr2retry_data          ),
+      .id_o             ( dtr2retry_opid          ),
+      .needs_retry_o    ( dtr2retry_needs_retry   ),
+      .valid_o          ( dtr2retry_valid         ),
+      .ready_i          ( dtr2retry_ready         ),
+      .fault_detected_o ( fault_detected_o        )
+  );
+
+  retry_end #(
+      .DataType ( data_out_t        ),
+      .IDSize   ( FLAG_TAG_BITS - 1 )
+  ) i_retry_end (
+      .clk_i,
+      .rst_ni,
+      .data_i        ( dtr2retry_data        ),
+      .id_i          ( dtr2retry_opid        ),
+      .needs_retry_i ( dtr2retry_needs_retry ),
+      .valid_i       ( dtr2retry_valid       ),
+      .ready_o       ( dtr2retry_ready       ),
+      .data_o        ( dtr2core_data         ),
+      .valid_o       ( dtr2core_valid        ),
+      .ready_i       ( core2dtr_ready        ),
+      .retry         ( retry_connection      )
+  );
+
 
    //********************************************************
    //***************** PROCESSOR ****************************
@@ -204,17 +346,17 @@ import rapid_recovery_pkg::*;
         .data_atop_o           ( /* Unconnected */           ),
         // apu-interconnect
         // Handshake
-        .apu_req_o             ( apu_master_req_o            ),
-        .apu_gnt_i             ( apu_master_gnt_i            ),
+        .apu_req_o             ( core2dtr_req                ),
+        .apu_gnt_i             ( core2dtr_gnt                ),
         // Request Bus
-        .apu_operands_o        ( apu_master_operands_o       ),
-        .apu_op_o              ( apu_master_op_o             ),
-        .apu_type_o            ( apu_master_type_o           ),
-        .apu_flags_o           ( apu_master_flags_o          ),
+        .apu_operands_o        ( core2dtr_data.operands      ),
+        .apu_op_o              ( core2dtr_data.op            ),
+        .apu_type_o            ( core2dtr_data.ftype         ),
+        .apu_flags_o           ( core2dtr_data.flags         ),
         // Response Bus
-        .apu_rvalid_i          ( apu_master_valid_i          ),
-        .apu_result_i          ( apu_master_result_i         ),
-        .apu_flags_i           ( apu_master_flags_i          ),
+        .apu_rvalid_i          ( dtr2core_valid              ),
+        .apu_result_i          ( dtr2core_data.result        ),
+        .apu_flags_i           ( dtr2core_data.flags         ),
         // IRQ Interface
         .irq_i                 ( core_irq_x                  ),
         .irq_level_i           ( '0                          ), // CLIC interrupt level
@@ -244,7 +386,8 @@ import rapid_recovery_pkg::*;
         .Zfinx               ( FPU                         ),
         .APU_WOP_CPU         ( APU_WOP_CPU                 ),
         .WAPUTYPE            ( WAPUTYPE                    ),
-        .DM_HaltAddress      ( DEBUG_START_ADDR + 16'h0800 )
+        .DM_HaltAddress      ( DEBUG_START_ADDR + 16'h0800 ),
+        .APU_NDSFLAGS_CPU    ( PURE_NDSFLAGS_CPU           )
       ) RI5CY_CORE             (
         .clk_i                 ( clk_i                       ),
         .rst_ni                ( rst_ni                      ),
@@ -273,21 +416,20 @@ import rapid_recovery_pkg::*;
         .data_rdata_i          ( core_data_rsp_i.r_data      ),
         .data_unaligned_o      (         /* Unused */        ),
         // apu-interconnect
-        // Handshake
-        .apu_master_req_o      ( apu_master_req_o            ),
-        .apu_master_ready_o    ( apu_master_ready_o          ),
-        .apu_master_gnt_i      ( apu_master_gnt_i            ),
         // Request Bus
-        .apu_master_operands_o ( apu_master_operands_o       ),
-        .apu_master_op_o       ( apu_master_op_o             ),
-        .apu_master_type_o     ( apu_master_type_o           ),
-        .apu_master_flags_o    ( apu_master_flags_o          ),
+        .apu_master_req_o      ( core2dtr_req                ),
+        .apu_master_gnt_i      ( dtr2core_gnt                ),
+        .apu_master_operands_o ( core2dtr_data.operands      ),
+        .apu_master_op_o       ( core2dtr_data.op            ),
+        .apu_master_type_o     ( core2dtr_data.ftype         ),
+        .apu_master_flags_o    ( core2dtr_data.flags         ),
         // Response Bus
-        .apu_master_valid_i    ( apu_master_valid_i          ),
-        .apu_master_result_i   ( apu_master_result_i         ),
-        .apu_master_flags_i    ( apu_master_flags_i          ),
+        .apu_master_valid_i    ( dtr2core_valid              ),
+        .apu_master_ready_o    ( core2dtr_ready              ),
+        .apu_master_result_i   ( dtr2core_data.result        ),
+        .apu_master_flags_i    ( dtr2core_data.flags         ),
         // Latency Override for redundant operations
-        .apu_latency_override_i( apu_latency_override_i       ),
+        .apu_latency_override_i( apu_latency_override_i      ),
         // IRQ Interface
         .irq_i                 ( irq_req_i                   ),
         .irq_id_i              ( irq_id_i                    ),

@@ -33,12 +33,14 @@ package apu_package;
   
    // by default set to 0
    parameter SHARED_INT_MULT   = 0;
-
    // CPU side / general params
    parameter NARGS_CPU     = 3;
    parameter WOP_CPU       = fpnew_pkg::OP_BITS + 2;
-   parameter NUSFLAGS_CPU  = 5;
-   parameter NDSFLAGS_CPU  = 15;
+   parameter PURE_NUSFLAGS_CPU  = 5;
+   parameter PURE_NDSFLAGS_CPU  = 11;
+   parameter FLAG_TAG_BITS = 2;
+   parameter NUSFLAGS_CPU  = PURE_NUSFLAGS_CPU + FLAG_TAG_BITS;
+   parameter NDSFLAGS_CPU  = PURE_NDSFLAGS_CPU + FLAG_TAG_BITS;
    /////////////////////////////////////////////////////////////////////////////
    // until here                                                              //
    /////////////////////////////////////////////////////////////////////////////
