@@ -1146,7 +1146,7 @@ begin
   // Output Side
   assign sys2hmr[k].apu_rvalid = apu_rvalid[k];
   assign sys2hmr[k].apu_rdata = apu_rdata[k];
-  assign sys2hmr[k].apu_rflags = apu_rdata[k];
+  assign sys2hmr[k].apu_rflags = apu_rflags[k];
   assign apu_rready[k] = hmr2sys[k].apu_rready;
 end
 
@@ -1203,10 +1203,10 @@ generate
       .fault_detected_o      ( /*Unused*/              )
     );
   end else begin
-    assign s_apu_gnt    = '0;
-    assign s_apu_rvalid = '0;
-    assign s_apu_rdata  = '0;
-    assign s_apu_rflags = '0;
+    assign apu_gnt    = '0;
+    assign apu_rvalid = '0;
+    assign apu_rdata  = '0;
+    assign apu_rflags = '0;
   end
 endgenerate
 
