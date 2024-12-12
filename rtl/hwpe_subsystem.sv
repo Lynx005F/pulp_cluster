@@ -58,6 +58,7 @@ module hwpe_subsystem
   `HCI_INTF(tcdm_softex, clk);
 
   localparam int unsigned N_HWPES = HWPE_CFG.NumHwpes;
+  localparam int unsigned LOG_N_HWPES = (N_HWPES == 1) ? 1 : $clog2(N_HWPES); // Deal with the case that there is just one hwpe, in this case we still generate one bit of select to not cause problems.
 
   logic [N_HWPES-1:0] busy;
   logic [N_HWPES-1:0][N_CORES-1:0][1:0] evt;
@@ -65,9 +66,9 @@ module hwpe_subsystem
   logic [N_HWPES-1:0] hwpe_clk;
   logic [N_HWPES-1:0] hwpe_en_int;
 
-  logic [$clog2(N_HWPES)-1:0] hwpe_sel_int;
+  logic [LOG_N_HWPES-1:0] hwpe_sel_int;
 
-  assign hwpe_sel_int = hwpe_sel_i[0+:$clog2(N_HWPES)];
+  assign hwpe_sel_int = hwpe_sel_i[0+:LOG_N_HWPES];
 
   hwpe_ctrl_intf_periph #(
     .ID_WIDTH ( ID_WIDTH )
