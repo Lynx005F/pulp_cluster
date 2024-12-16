@@ -17,6 +17,7 @@
 package pulp_cluster_package;
 
   import rapid_recovery_pkg::*;
+  import apu_package::*;
 
   typedef bit [ 7:0] byte_t;
   typedef bit [12:0] alias_t;
@@ -252,6 +253,10 @@ package pulp_cluster_package;
     logic [31:0] data_rdata;
     logic        irq_req;
     logic [4:0]  irq_id;
+    logic                    apu_rvalid;
+    logic [31:0]             apu_rdata;
+    logic [NUSFLAGS_CPU-1:0] apu_rflags;
+    logic                    apu_gnt;
   } core_inputs_t;
 
   typedef struct packed {
@@ -266,6 +271,12 @@ package pulp_cluster_package;
     logic [4:0]  irq_ack_id;
     logic        debug_halted;
     logic        core_busy;
+    logic                       apu_req;
+    logic [NARGS_CPU-1:0][31:0] apu_operands;
+    logic         [WOP_CPU-1:0] apu_op;
+    logic        [WAPUTYPE-1:0] apu_type;
+    logic    [NDSFLAGS_CPU-1:0] apu_flags;
+    logic                       apu_rready;
   } core_outputs_t;
 
   typedef struct packed {
