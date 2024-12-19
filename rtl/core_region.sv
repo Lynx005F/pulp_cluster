@@ -158,13 +158,8 @@ import apu_package::*;
   localparam LOCK_TIMEOUT = 60;
 
   retry_interface #(
-    .IDSize ( FLAG_TAG_BITS -1 )
+    .IDSize ( FLAG_TAG_BITS )
   ) retry_connection ();
-
-  DTR_interface #(
-    .IDSize             ( FLAG_TAG_BITS ),
-    .InternalRedundancy ( 0             )
-  ) dtr_connection ();
 
   // Request Processing
   typedef struct packed {
@@ -179,16 +174,16 @@ import apu_package::*;
   data_in_t core2dtr_data;
 
   data_in_t retry2dtr_data;
-  logic [FLAG_TAG_BITS-2:0] retry2dtr_opid;
+  logic [FLAG_TAG_BITS-1:0] retry2dtr_opid;
   logic retry2dtr_valid, retry2dtr_ready;
 
   logic [FLAG_TAG_BITS-1:0] dtr2fpu_id;
   data_in_t dtr2fpu_data;
 
   retry_start #(
-      .DataType       ( data_in_t         ),
-      .IDSize         ( FLAG_TAG_BITS - 1 ),
-      .ExternalIDBits ( 0                 )
+      .DataType       ( data_in_t     ),
+      .IDSize         ( FLAG_TAG_BITS ),
+      .ExternalIDBits ( 0             )
   ) i_retry_start (
       .clk_i,
       .rst_ni,
@@ -204,24 +199,23 @@ import apu_package::*;
   );
 
   DTR_start #(
-      .DataType           ( data_in_t        ),
-      .IDSize             ( FLAG_TAG_BITS    ),
-      .InternalRedundancy ( 0                ),
-      .UseExternalId      ( 1                ),
-      .EarlyReadyEnable   ( 1                )
+      .DataType           ( data_in_t     ),
+      .IDSize             ( FLAG_TAG_BITS ),
+      .InternalRedundancy ( 0             ),
+      .UseExternalId      ( 1             ),
+      .EarlyReadyEnable   ( 1             )
   ) i_DTR_start (
       .clk_i,
       .rst_ni,
-      .enable_i      ( apu_latency_override_i  ),
-      .dtr_interface ( dtr_connection          ),
-      .data_i        ( retry2dtr_data          ),
-      .id_i          ( retry2dtr_opid          ),
-      .valid_i       ( retry2dtr_valid         ),
-      .ready_o       ( retry2dtr_ready         ),
-      .data_o        ( dtr2fpu_data            ),  
-      .id_o          ( dtr2fpu_id              ),
-      .valid_o       ( apu_master_req_o        ),
-      .ready_i       ( apu_master_gnt_i        )
+      .enable_i      ( apu_latency_override_i ),
+      .data_i        ( retry2dtr_data         ),
+      .id_i          ( retry2dtr_opid         ),
+      .valid_i       ( retry2dtr_valid        ),
+      .ready_o       ( retry2dtr_ready        ),
+      .data_o        ( dtr2fpu_data           ),  
+      .id_o          ( dtr2fpu_id             ),
+      .valid_o       ( apu_master_req_o       ),
+      .ready_i       ( apu_master_gnt_i       )
   );
 
   assign apu_master_type_o = dtr2fpu_data.ftype;
@@ -239,7 +233,7 @@ import apu_package::*;
   logic [FLAG_TAG_BITS-1:0] fpu2dtr_id;
 
   data_out_t dtr2retry_data;
-  logic [FLAG_TAG_BITS-2:0] dtr2retry_opid;
+  logic [FLAG_TAG_BITS-1:0] dtr2retry_opid;
   logic dtr2retry_valid, dtr2retry_ready, dtr2retry_needs_retry;
 
   logic core2dtr_ready;
@@ -251,31 +245,30 @@ import apu_package::*;
   assign {fpu2dtr_id, fpu2dtr_data.flags} = apu_master_flags_i;
 
   DTR_end #(
-      .DataType           ( data_out_t        ),
-      .LockTimeout        ( LOCK_TIMEOUT      ),
-      .IDSize             ( FLAG_TAG_BITS     ),
-      .InternalRedundancy ( 0                 )
+      .DataType           ( data_out_t    ),
+      .LockTimeout        ( LOCK_TIMEOUT  ),
+      .IDSize             ( FLAG_TAG_BITS ),
+      .InternalRedundancy ( 0             )
   ) i_DTR_end (
       .clk_i,
       .rst_ni,
-      .enable_i         ( apu_latency_override_i  ),
-      .dtr_interface    ( dtr_connection          ),
-      .data_i           ( fpu2dtr_data            ),
-      .id_i             ( fpu2dtr_id              ),
-      .valid_i          ( apu_master_valid_i      ),
-      .ready_o          ( apu_master_ready_o      ),
-      .lock_o           ( /*  */                  ),
-      .data_o           ( dtr2retry_data          ),
-      .id_o             ( dtr2retry_opid          ),
-      .needs_retry_o    ( dtr2retry_needs_retry   ),
-      .valid_o          ( dtr2retry_valid         ),
-      .ready_i          ( dtr2retry_ready         ),
-      .fault_detected_o ( fault_detected_o        )
+      .enable_i         ( apu_latency_override_i ),
+      .data_i           ( fpu2dtr_data           ),
+      .id_i             ( fpu2dtr_id             ),
+      .valid_i          ( apu_master_valid_i     ),
+      .ready_o          ( apu_master_ready_o     ),
+      .lock_o           ( /*  */                 ),
+      .data_o           ( dtr2retry_data         ),
+      .id_o             ( dtr2retry_opid         ),
+      .needs_retry_o    ( dtr2retry_needs_retry  ),
+      .valid_o          ( dtr2retry_valid        ),
+      .ready_i          ( dtr2retry_ready        ),
+      .fault_detected_o ( fault_detected_o       )
   );
 
   retry_end #(
-      .DataType ( data_out_t        ),
-      .IDSize   ( FLAG_TAG_BITS - 1 )
+      .DataType ( data_out_t    ),
+      .IDSize   ( FLAG_TAG_BITS )
   ) i_retry_end (
       .clk_i,
       .rst_ni,

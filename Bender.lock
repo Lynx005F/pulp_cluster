@@ -93,7 +93,7 @@ packages:
     dependencies:
     - common_cells
   fpnew:
-    revision: 8b4a203a3ea3fae02cc61010daf16b48e6aeef7d
+    revision: 9ae365eed4d35a5f24ee03b6d28e8736691049ed
     version: null
     source:
       Git: https://github.com/Lynx005F/cvfpu.git
@@ -224,7 +224,7 @@ packages:
     - register_interface
     - tech_cells_generic
   redundancy_cells:
-    revision: 9dddd8bc9b6498d99ecc7f8b045e6b42e5bf5d1d
+    revision: a08ea1b3a19e38eb47a4e7b270c5f9e6fd0c07f9
     version: null
     source:
       Git: https://github.com/Lynx005F/redundancy_cells.git
