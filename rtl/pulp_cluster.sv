@@ -400,6 +400,7 @@ XBAR_PERIPH_BUS s_core_euctrl_bus[Cfg.NumCores-1:0]();
 
 // redundancy wires to APU
 logic fpu_redundancy_enable;
+logic [Cfg.NumCores-1:0] core_redundancy_enable;
 
 //----------------------------------------------------------------------//
 // Interfaces between ICache - L0 - Icache_Interco and Icache_ctrl_unit //
@@ -959,7 +960,7 @@ generate
       .apu_master_ready_o    ( core2hmr[i].apu_rready   ),
       .apu_master_result_i   ( hmr2core[i].apu_rdata    ),
       .apu_master_flags_i    ( hmr2core[i].apu_rflags   ),
-      .apu_latency_override_i( fpu_redundancy_enable    )
+      .apu_latency_override_i( core_redundancy_enable[i])
     );
 
     assign dbg_core_halted[i] = core2hmr[i].debug_halted;
@@ -1110,7 +1111,8 @@ hmr_unit #(
   .core_nominal_outputs_i ( core2hmr     ),
   .core_bus_outputs_i     ( '0           ),
   .core_axi_outputs_i     ( '0           ),
-  .redundancy_enable_o    ( fpu_redundancy_enable )
+  .redundancy_enable_o      ( fpu_redundancy_enable  ),
+  .core_redundancy_enable_o ( core_redundancy_enable )
 );
 
 //****************************************************
