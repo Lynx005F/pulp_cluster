@@ -242,10 +242,10 @@ packages:
     - common_cells
     - common_verification
   riscv:
-    revision: c760db14dbd6cc3ec3b8ae8274df2eac7225bcac
+    revision: 8d721be2445d7ae0d4b96a0cd84064116b6d4836
     version: null
     source:
-      Git: https://github.com/AlSaqr-platform/riscv_nn.git
+      Git: https://github.com/Lynx005F/riscv_nn.git
     dependencies:
     - fpnew
     - tech_cells_generic
