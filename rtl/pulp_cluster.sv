@@ -960,7 +960,7 @@ generate
       .apu_master_ready_o    ( core2hmr[i].apu_rready   ),
       .apu_master_result_i   ( hmr2core[i].apu_rdata    ),
       .apu_master_flags_i    ( hmr2core[i].apu_rflags   ),
-      .apu_latency_override_i( core_redundancy_enable[i])
+      .redundancy_enable_i   ( core_redundancy_enable[i])
     );
 
     assign dbg_core_halted[i] = core2hmr[i].debug_halted;

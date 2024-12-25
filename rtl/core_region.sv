@@ -114,7 +114,7 @@ import apu_package::*;
   input logic [31:0]                     apu_master_result_i,
   input logic [APU_NUSFLAGS_CPU-1:0]     apu_master_flags_i,
   // latency override for temporal or retrying APU
-  input logic                            apu_latency_override_i 
+  input logic                            redundancy_enable_i 
 );
 
   // localparam N_EXT_PERF_COUNTERS_ACTUAL = 5;
@@ -207,7 +207,7 @@ import apu_package::*;
   ) i_DTR_start (
       .clk_i,
       .rst_ni,
-      .enable_i      ( apu_latency_override_i ),
+      .enable_i      ( redundancy_enable_i    ),
       .data_i        ( retry2dtr_data         ),
       .id_i          ( retry2dtr_opid         ),
       .valid_i       ( retry2dtr_valid        ),
@@ -252,7 +252,7 @@ import apu_package::*;
   ) i_DTR_end (
       .clk_i,
       .rst_ni,
-      .enable_i         ( apu_latency_override_i ),
+      .enable_i         ( redundancy_enable_i    ),
       .data_i           ( fpu2dtr_data           ),
       .id_i             ( fpu2dtr_id             ),
       .valid_i          ( apu_master_valid_i     ),
@@ -422,7 +422,7 @@ import apu_package::*;
         .apu_master_result_i   ( dtr2core_data.result        ),
         .apu_master_flags_i    ( dtr2core_data.flags         ),
         // Latency Override for redundant operations
-        .apu_latency_override_i( apu_latency_override_i      ),
+        .apu_latency_override_i( '1                          ),
         // IRQ Interface
         .irq_i                 ( irq_req_i                   ),
         .irq_id_i              ( irq_id_i                    ),
