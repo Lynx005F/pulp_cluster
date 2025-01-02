@@ -12,10 +12,10 @@ overrides:
   hwpe-ctrl         : { git: "https://github.com/Lynx005F/hwpe-ctrl.git"              , rev: 376c5da312d60cecd732336d23a0d0da2a1d0ea2 } 
 
   # branch: itemm/fpr_features
-  redundancy_cells:       { git: "https://github.com/Lynx005F/redundancy_cells.git", rev: 9dddd8bc9b6498d99ecc7f8b045e6b42e5bf5d1d } 
+  redundancy_cells:       { git: "https://github.com/Lynx005F/redundancy_cells.git", rev: 2c74b0f912f8a03a1458a7ec0b598c2ca03e889b } 
 
   # branch: itemm/dev
   fpnew: { git: "https://github.com/Lynx005F/cvfpu.git", rev: 9ae365eed4d35a5f24ee03b6d28e8736691049ed }
 
   # branch: itemm/apu_lat_override
-  riscv:                  { git: "https://github.com/Lynx005F/riscv_nn.git", rev: 8d721be2445d7ae0d4b96a0cd84064116b6d4836 }
+  riscv:                  { git: "https://github.com/Lynx005F/riscv_nn.git", rev: 7c736eb1bdabbfed4f08058499437b2e095ad2b7 }
