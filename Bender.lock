@@ -108,10 +108,10 @@ packages:
     dependencies:
     - common_cells
   fpu_interco:
-    revision: b5f7a315929308823cacd81e1e4898f1eeecfc64
+    revision: 649d9164a77bf2d8860763f8a47d0b8aab2b40c0
     version: null
     source:
-      Git: https://github.com/pulp-platform/fpu_interco
+      Git: https://github.com/Lynx005F/fpu_interco
     dependencies:
     - fpnew
     - riscv
