@@ -18,4 +18,4 @@ overrides:
   fpnew: { git: "https://github.com/Lynx005F/cvfpu.git", rev: 9ae365eed4d35a5f24ee03b6d28e8736691049ed }
 
   # branch: itemm/no_vectorial
-  riscv:                  { git: "https://github.com/Lynx005F/riscv_nn.git", rev: e0b6ea63afafd600b9cd6ed790ef99d5e815b0e3 }
+  riscv:                  { git: "https://github.com/Lynx005F/riscv_nn.git", rev: 7c736eb1bdabbfed4f08058499437b2e095ad2b7 }

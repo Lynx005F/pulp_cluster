@@ -109,7 +109,7 @@ packages:
     dependencies:
     - common_cells
   fpu_interco:
-    revision: da2758151bf48b27a6086f5ecb5ea0195c45d94b
+    revision: 2d26b196586da492f9db116ee92241af05d8d11e
     version: null
     source:
       Git: https://github.com/Lynx005F/fpu_interco
