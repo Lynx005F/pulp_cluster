@@ -242,7 +242,7 @@ packages:
     - common_cells
     - common_verification
   riscv:
-    revision: e0b6ea63afafd600b9cd6ed790ef99d5e815b0e3
+    revision: 8d721be2445d7ae0d4b96a0cd84064116b6d4836
     version: null
     source:
       Git: https://github.com/Lynx005F/riscv_nn.git

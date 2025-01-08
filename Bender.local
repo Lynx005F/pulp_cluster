@@ -1,4 +1,4 @@
 overrides:
   cv32e40p            : { git: "https://github.com/pulp-platform/cv32e40p.git"            , rev: e863f576699815b38cc9d80dbdede8ed5efd5991 } # branch: michaero/safety-island-clic
-  fpu_interco:          { git: "https://github.com/Lynx005F/fpu_interco", rev: 649d9164a77bf2d8860763f8a47d0b8aab2b40c0 } # branch: itemm/shared_fpu
-  riscv:                { git: "https://github.com/Lynx005F/riscv_nn.git", rev: e0b6ea63afafd600b9cd6ed790ef99d5e815b0e3 } # branch:itemm/no_vectorial
+  fpu_interco:          { git: "https://github.com/Lynx005F/fpu_interco", rev: 649d9164a77bf2d8860763f8a47d0b8aab2b40c0 } # Version should match Bender.yml, override just for repository
+  riscv:                { git: "https://github.com/Lynx005F/riscv_nn.git", rev: 8d721be2445d7ae0d4b96a0cd84064116b6d4836 } # Version should match Bender.yml, override just for repository
