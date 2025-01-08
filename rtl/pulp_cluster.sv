@@ -94,7 +94,7 @@ module pulp_cluster
   localparam int unsigned PeRoutingLsb = 10,
   // FPU bus parameters
   localparam int unsigned FpuNumArgs = 3,
-  localparam int unsigned FpuOpCodeWidth = 6,
+  localparam int unsigned FpuOpCodeWidth = 7,
   localparam int unsigned FpuTypeWidth = 3,
   localparam int unsigned FpuInFlagsWidth = 15,
   localparam int unsigned FpuOutFlagsWidth = 5,

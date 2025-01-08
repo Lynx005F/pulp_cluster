@@ -35,7 +35,7 @@ package apu_package;
 
    // CPU side / general params
    parameter NARGS_CPU     = 3;
-   parameter WOP_CPU       = 6;
+   parameter WOP_CPU       = 7;
    parameter NUSFLAGS_CPU  = 5;
    parameter NDSFLAGS_CPU  = 15;
    /////////////////////////////////////////////////////////////////////////////

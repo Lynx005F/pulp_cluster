@@ -240,7 +240,8 @@ import rapid_recovery_pkg::*;
         .N_EXT_PERF_COUNTERS ( N_EXT_PERF_COUNTERS  ),
         .Zfinx               ( FPU                         ),
         .WAPUTYPE            ( WAPUTYPE                    ),
-        .DM_HaltAddress      ( DEBUG_START_ADDR + 16'h0800 )
+        .DM_HaltAddress      ( DEBUG_START_ADDR + 16'h0800 ),
+        .APU_WOP_CPU         ( APU_WOP_CPU                 )
       ) RI5CY_CORE             (
         .clk_i                 ( clk_i                       ),
         .rst_ni                ( rst_ni                      ),
